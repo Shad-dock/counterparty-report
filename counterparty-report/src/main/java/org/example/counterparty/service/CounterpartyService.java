@@ -18,7 +18,7 @@ public class CounterpartyService {
     @Autowired
     private CounterpartyDataRepository counterpartyDataRepository;
 
-    private VerificationRequest createRequest(User user, String innOgrn){
+    public VerificationRequest createRequest(User user, String innOgrn){
         VerificationRequest request = new VerificationRequest(user, innOgrn);
         return verificationRequestRepository.save(request);
     }
