@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Отчет по контрагенту</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h1>Проверка контрагента</h1>
+<form action="/verify" method="post">
+    <div>
+        <label>ИНН или ОГРН:</label>
+        <input type="text" name="innOgrn" required/>
+    </div>
+    <button type="submit">Проверить</button>
+</form>
+<hr/>
+<a href="/history">История проверок</a> |
+<a href="/logout">Выйти</a>
+</body>
+</html>
