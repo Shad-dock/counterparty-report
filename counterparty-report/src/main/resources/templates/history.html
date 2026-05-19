@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>История проверок</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .status-success { color: green; }
+        .status-error { color: red; }
+        .status-pending { color: orange; }
+        .nav { margin-top: 20px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>История проверок</h1>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>ИНН/ОГРН</th>
+            <th>Статус</th>
+            <th>Дата</th>
+            <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="req : ${requests}">
+            <td th:text="${req.id}"></td>
+            <td th:text="${req.innOgrn}"></td>
+            <td>
+                    <span th:class="${req.status == 'SUCCESS'} ? 'status-success' : (${req.status == 'ERROR'} ? 'status-error' : 'status-pending')"
+                          th:text="${req.status}"></span>
+            </td>
+            <td th:text="${req.createdAt}"></td>
+            <td>
+                <a th:href="@{/report/{id}(id=${req.id})}">Посмотреть отчет</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="nav">
+        <a href="/">На главную</a> |
+        <a href="/logout">Выйти</a>
+    </div>
+</div>
+</body>
+</html>

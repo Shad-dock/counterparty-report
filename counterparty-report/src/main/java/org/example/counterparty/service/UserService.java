@@ -16,11 +16,10 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public User register(String username, String rawPassword){
-        if(userRepository.existsByUsername(username)){
+    public User register(String username, String rawPassword) {
+        if (userRepository.existsByUsername(username)) {
             throw new RuntimeException("Username already exists");
         }
-
         String encodedPassword = passwordEncoder.encode(rawPassword);
         User user = new User(username, encodedPassword, "USER");
         return userRepository.save(user);

@@ -1,20 +1,51 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Отчет по контрагенту</title>
     <meta charset="UTF-8">
+    <title>Проверка контрагента</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        input { padding: 8px; width: 300px; }
+        button { padding: 8px 16px; }
+        .error { color: red; margin-top: 20px; }
+        .report {
+            background: #f0f0f0;
+            padding: 15px;
+            margin-top: 20px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            border-radius: 5px;
+        }
+        .nav { margin-top: 20px; }
+        .nav a { margin-right: 15px; }
+    </style>
 </head>
 <body>
-<h1>Проверка контрагента</h1>
-<form action="/verify" method="post">
-    <div>
-        <label>ИНН или ОГРН:</label>
-        <input type="text" name="innOgrn" required/>
+<div class="container">
+    <h1>Проверка контрагента</h1>
+
+    <form action="/verify" method="post">
+        <div>
+            <label>ИНН или ОГРН:</label>
+            <input type="text" name="innOgrn" required/>
+        </div>
+        <button type="submit">Проверить</button>
+    </form>
+
+    <div th:if="${error}" class="error">
+        <p th:text="${error}"></p>
     </div>
-    <button type="submit">Проверить</button>
-</form>
-<hr/>
-<a href="/history">История проверок</a> |
-<a href="/logout">Выйти</a>
+
+    <div th:if="${report}" class="report">
+        <pre th:text="${report}"></pre>
+        <p>ID запроса: <span th:text="${requestId}"></span></p>
+    </div>
+
+    <div class="nav">
+        <a href="/history">История проверок</a> |
+        <a href="/logout">Выйти</a>
+    </div>
+</div>
 </body>
 </html>
