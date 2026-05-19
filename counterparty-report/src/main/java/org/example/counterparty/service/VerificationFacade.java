@@ -8,6 +8,7 @@ import org.example.counterparty.entity.User;
 import org.example.counterparty.entity.VerificationRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.example.counterparty.builder.ConcreteReportBuilder;
 
 @Service
 public class VerificationFacade {
@@ -20,9 +21,6 @@ public class VerificationFacade {
 
     @Autowired
     private CounterpartyDataAdapter adapter;
-
-    @Autowired
-    private ReportBuilder reportBuilder;
 
     public VerificationResult verify(String innOgrn, User user) {
         if (!isValidInnOgrn(innOgrn)) {
@@ -48,16 +46,22 @@ public class VerificationFacade {
             counterpartyService.saveCounterpartyData(request, data);
             counterpartyService.updateRequestStatus(request, "SUCCESS", null);
 
-            reportBuilder.reset();
+            ReportBuilder reportBuilder = new ConcreteReportBuilder();
+
             String report = reportBuilder
-                    .setTitle("Отчет по контрагенту")
-                    .addSection("Наименование: " + data.getName())
-                    .addSection("ИНН: " + data.getInn())
-                    .addSection("ОГРН: " + data.getOgrn())
-                    .addSection("Адрес: " + data.getAddress())
-                    .addSection("Статус: " + data.getStatus())
-                    .addSection("Дата регистрации: " + data.getRegistrationDate())
-                    .setFooter("Дата формирования: " + java.time.LocalDate.now())
+                    .createNew()  // ← явно создаём новый продукт
+                    .setTitle("ОТЧЕТ ПО КОНТРАГЕНТУ")
+                    .addSection("\n1. ОСНОВНЫЕ СВЕДЕНИЯ:")
+                    .addSection("   Наименование: " + data.getName())
+                    .addSection("   ИНН: " + data.getInn())
+                    .addSection("   ОГРН: " + data.getOgrn())
+                    .addSection("\n2. ЮРИДИЧЕСКИЙ АДРЕС:")
+                    .addSection("   " + data.getAddress())
+                    .addSection("\n3. СТАТУС ОРГАНИЗАЦИИ:")
+                    .addSection("   " + formatStatus(data.getStatus()))
+                    .addSection("\n4. ДАТА РЕГИСТРАЦИИ:")
+                    .addSection("   " + data.getRegistrationDate())
+                    .setFooter("\nДата формирования отчета: " + java.time.LocalDate.now())
                     .build();
 
             return VerificationResult.success(report, request.getId());
@@ -67,6 +71,17 @@ public class VerificationFacade {
             return VerificationResult.error("Ошибка при обращении к API: " + e.getMessage());
         }
     }
+
+    private String formatStatus(String status) {
+        if (status == null) return "Неизвестно";
+        switch (status) {
+            case "ACTIVE": return "Действующее";
+            case "LIQUIDATING": return "В процессе ликвидации";
+            case "LIQUIDATED": return "Ликвидировано";
+            default: return status;
+        }
+    }
+
 
     private boolean isValidInnOgrn(String innOgrn) {
         if (innOgrn == null) return false;
