@@ -12,6 +12,12 @@ public class ConcreteReportBuilder implements ReportBuilder {
     }
 
     @Override
+    public ReportBuilder createNew() {
+        reset();
+        return this;
+    }
+
+    @Override
     public void reset() {
         content = new StringBuilder();
     }

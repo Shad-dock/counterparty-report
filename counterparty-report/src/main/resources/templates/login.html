@@ -1,22 +1,47 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Вход</title>
     <meta charset="UTF-8">
+    <title>Вход</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .container { max-width: 400px; margin: 0 auto; }
+        input { padding: 8px; width: 100%; margin: 5px 0 15px 0; }
+        button { padding: 10px; width: 100%; background: #007bff; color: white; border: none; cursor: pointer; }
+        .error { color: red; background: #ffebee; padding: 10px; border-radius: 5px; margin-bottom: 15px; }
+        .success { color: green; background: #e8f5e9; padding: 10px; border-radius: 5px; margin-bottom: 15px; }
+        .nav { margin-top: 20px; text-align: center; }
+    </style>
 </head>
 <body>
-<h1>Вход в систему</h1>
-<form th:action="@{/login}" method="post">
-    <div>
-        <label>Имя пользователя:</label>
-        <input type="text" name="username"/>
+<div class="container">
+    <h1>Вход в систему</h1>
+
+    <div th:if="${param.error}" class="error">
+        Неверное имя пользователя или пароль
     </div>
-    <div>
-        <label>Пароль:</label>
-        <input type="password" name="password"/>
+
+    <div th:if="${param.logout}" class="success">
+        Вы вышли из системы
     </div>
-    <button type="submit">Войти</button>
-</form>
-<p>Нет аккаунта? <a href="/register">Зарегистрироваться</a></p>
+
+    <div th:if="${success}" class="success" th:text="${success}"></div>
+
+    <form th:action="@{/login}" method="post">
+        <div>
+            <label>Имя пользователя:</label>
+            <input type="text" name="username" required/>
+        </div>
+        <div>
+            <label>Пароль:</label>
+            <input type="password" name="password" required/>
+        </div>
+        <button type="submit">Войти</button>
+    </form>
+
+    <div class="nav">
+        <a href="/register">Нет аккаунта? Зарегистрироваться</a>
+    </div>
+</div>
 </body>
 </html>

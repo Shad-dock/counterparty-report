@@ -1,22 +1,39 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Регистрация</title>
     <meta charset="UTF-8">
+    <title>Регистрация</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .container { max-width: 400px; margin: 0 auto; }
+        input { padding: 8px; width: 100%; margin: 5px 0 15px 0; }
+        button { padding: 10px; width: 100%; background: #28a745; color: white; border: none; cursor: pointer; }
+        .error { color: red; background: #ffebee; padding: 10px; border-radius: 5px; margin-bottom: 15px; }
+        .success { color: green; background: #e8f5e9; padding: 10px; border-radius: 5px; margin-bottom: 15px; }
+        .nav { margin-top: 20px; text-align: center; }
+    </style>
 </head>
 <body>
-<h1>Регистрация</h1>
-<form action="/register" method="post">
-    <div>
-        <label>Имя пользователя:</label>
-        <input type="text" name="username" required/>
+<div class="container">
+    <h1>Регистрация</h1>
+
+    <div th:if="${error}" class="error" th:text="${error}"></div>
+
+    <form action="/register" method="post">
+        <div>
+            <label>Имя пользователя:</label>
+            <input type="text" name="username" required/>
+        </div>
+        <div>
+            <label>Пароль:</label>
+            <input type="password" name="password" required/>
+        </div>
+        <button type="submit">Зарегистрироваться</button>
+    </form>
+
+    <div class="nav">
+        <a href="/login">Уже есть аккаунт? Войти</a>
     </div>
-    <div>
-        <label>Пароль:</label>
-        <input type="password" name="password" required/>
-    </div>
-    <button type="submit">Зарегистрироваться</button>
-</form>
-<p>Уже есть аккаунт? <a href="/login">Войти</a></p>
+</div>
 </body>
 </html>
