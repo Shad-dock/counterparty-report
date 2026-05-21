@@ -34,8 +34,8 @@
             <td th:text="${req.id}"></td>
             <td th:text="${req.innOgrn}"></td>
             <td>
-                    <span th:class="${req.status == 'SUCCESS'} ? 'status-success' : (${req.status == 'ERROR'} ? 'status-error' : 'status-pending')"
-                          th:text="${req.status}"></span>
+                <span th:class="${req.status == 'SUCCESS'} ? 'status-success' : (${req.status == 'ERROR'} ? 'status-error' : 'status-pending')"
+                      th:text="${req.status}"></span>
             </td>
             <td th:text="${req.createdAt}"></td>
             <td>

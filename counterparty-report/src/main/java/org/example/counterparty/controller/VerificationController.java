@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class VerificationController {
@@ -27,8 +28,9 @@ public class VerificationController {
 //    }
 
     @PostMapping("/verify")
-    public String verify(@RequestParam String innOgrn, Model model) {
-        System.out.println("=== verify() called ===");
+    public String verify(@RequestParam String innOgrn,
+                         RedirectAttributes redirectAttributes) {
+        
         System.out.println("INN: " + innOgrn);
 
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext()
@@ -36,29 +38,30 @@ public class VerificationController {
 
         User user = userService.findByUsername(userDetails.getUsername()).orElse(null);
         if (user == null) {
-            System.out.println("User not found!");
-            model.addAttribute("error", "Пользователь не найден");
-            return "index";
+            redirectAttributes.addFlashAttribute("error", "Пользователь не найден");
+            return "redirect:/";
         }
-
-        System.out.println("User: " + user.getUsername());
 
         VerificationFacade.VerificationResult result = verificationFacade.verify(innOgrn, user);
 
-        System.out.println("Result - success: " + result.isSuccess());
-        System.out.println("Result - notFound: " + result.isNotFound());
-        System.out.println("Result - error: " + result.getError());
-
         if (result.isSuccess()) {
-            System.out.println("Report length: " + (result.getReport() != null ? result.getReport().length() : 0));
-            model.addAttribute("report", result.getReport());
-            model.addAttribute("requestId", result.getRequestId());
+            redirectAttributes.addFlashAttribute("report", result.getReport());
+            redirectAttributes.addFlashAttribute("requestId", result.getRequestId());
+            return "redirect:/report/current";
         } else if (result.isNotFound()) {
-            model.addAttribute("error", "Компания не найдена");
+            redirectAttributes.addFlashAttribute("error", "Компания с ИНН/ОГРН '" + innOgrn + "' не найдена");
+            return "redirect:/";
         } else {
-            model.addAttribute("error", result.getError());
+            redirectAttributes.addFlashAttribute("error", result.getError());
+            return "redirect:/";
         }
+    }
 
-        return "index";
+    @GetMapping("/report/current")
+    public String currentReport(Model model) {
+        if (!model.containsAttribute("report")) {
+            return "redirect:/";
+        }
+        return "report";
     }
 }

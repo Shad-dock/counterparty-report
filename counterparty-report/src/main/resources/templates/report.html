@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Отчёт по контрагенту</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .report {
+            background: #f0f0f0;
+            padding: 15px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .error {
+            color: red;
+            background: #ffebee;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .nav { margin-top: 20px; }
+        .button-back, .button-logout {
+            display: inline-block;
+            padding: 8px 16px;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+        .button-back { background: #007bff; color: white; }
+        .button-back:hover { background: #0069d9; }
+        .button-logout { background: #dc3545; color: white; }
+        .button-logout:hover { background: #c82333; }
+        hr { margin: 20px 0; }
+        h1 { color: #333; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Отчёт по контрагенту</h1>
+
+    <div th:if="${report}" class="report">
+        <pre th:text="${report}"></pre>
+    </div>
+
+    <div th:if="${error}" class="error">
+        <p th:text="${error}"></p>
+    </div>
+
+    <hr/>
+
+    <div class="nav">
+        <a href="/" class="button-back">На главную</a>
+        <a href="/logout" class="button-logout">Выйти</a>
+    </div>
+</div>
+</body>
+</html>
