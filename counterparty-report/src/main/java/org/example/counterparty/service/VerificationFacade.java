@@ -49,7 +49,7 @@ public class VerificationFacade {
             ReportBuilder reportBuilder = new ConcreteReportBuilder();
 
             String report = reportBuilder
-                    .createNew()  // ← явно создаём новый продукт
+                    .createNew()
                     .setTitle("ОТЧЕТ ПО КОНТРАГЕНТУ")
                     .addSection("\n1. ОСНОВНЫЕ СВЕДЕНИЯ:")
                     .addSection("   Наименование: " + data.getName())

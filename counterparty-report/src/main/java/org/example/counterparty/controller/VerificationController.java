@@ -30,7 +30,7 @@ public class VerificationController {
     @PostMapping("/verify")
     public String verify(@RequestParam String innOgrn,
                          RedirectAttributes redirectAttributes) {
-        
+
         System.out.println("INN: " + innOgrn);
 
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext()
