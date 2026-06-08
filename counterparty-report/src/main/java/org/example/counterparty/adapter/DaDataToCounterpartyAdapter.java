@@ -23,7 +23,20 @@ public class DaDataToCounterpartyAdapter implements CounterpartyDataAdapter {
         counterpartyData.setOgrn(data.getOgrn());
         counterpartyData.setAddress(data.getAddress() != null ? data.getAddress().getValue() : null);
         counterpartyData.setStatus(data.getState() != null ? data.getState().getStatus() : null);
-        counterpartyData.setRegistrationDate(data.getRegistrationDate());
+        //counterpartyData.setRegistrationDate(data.getRegistrationDate());
+        String regDate = null;
+        if (data.getState() != null && data.getState().getRegistrationDate() != null) {
+            try {
+                long timestamp = Long.parseLong(data.getState().getRegistrationDate());
+                java.time.LocalDate date = java.time.Instant.ofEpochMilli(timestamp)
+                        .atZone(java.time.ZoneId.systemDefault())
+                        .toLocalDate();
+                regDate = date.toString();
+            } catch (NumberFormatException e) {
+                regDate = data.getState().getRegistrationDate();
+            }
+        }
+        counterpartyData.setRegistrationDate(regDate);
 
         return counterpartyData;
     }

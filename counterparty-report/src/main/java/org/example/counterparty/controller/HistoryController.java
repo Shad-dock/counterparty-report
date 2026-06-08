@@ -2,6 +2,7 @@ package org.example.counterparty.controller;
 
 import org.example.counterparty.builder.ConcreteReportBuilder;
 import org.example.counterparty.builder.ReportBuilder;
+import org.example.counterparty.entity.CounterpartyData;
 import org.example.counterparty.entity.User;
 import org.example.counterparty.entity.VerificationRequest;
 import org.example.counterparty.service.CounterpartyService;
@@ -50,10 +51,10 @@ public class HistoryController {
         model.addAttribute("report", request.getCounterpartyData() != null ?
                 buildReportFromData(request.getCounterpartyData()) : "Данные не найдены");
         model.addAttribute("requestId", id);
-        return "index";
+        return "report";
     }
 
-    private String buildReportFromData(org.example.counterparty.entity.CounterpartyData data) {
+    private String buildReportFromData(CounterpartyData data) {
         ReportBuilder reportBuilder = new ConcreteReportBuilder();
         return reportBuilder
                 .createNew()

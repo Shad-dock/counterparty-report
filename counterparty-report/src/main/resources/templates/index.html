@@ -37,6 +37,16 @@
         <a href="/history">История проверок</a>
         <a href="/logout">Выйти</a>
     </div>
+
+    <div id="loading" style="display:none; margin-top: 10px;">
+        Выполняется проверка, пожалуйста, подождите..
+    </div>
+
+    <script>
+        document.querySelector('form').onsubmit = function() {
+            document.getElementById('loading').style.display = 'block';
+        };
+    </script>
 </div>
 </body>
 </html>

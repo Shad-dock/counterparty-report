@@ -86,7 +86,13 @@ public class DaDataResponse {
     public static class State {
         private String status;
 
+        @JsonProperty("registration_date")
+        private String registrationDate;
+
         public String getStatus() { return status; }
         public void setStatus(String status) { this.status = status; }
+
+        public String getRegistrationDate() { return registrationDate; }
+        public void setRegistrationDate(String registrationDate) { this.registrationDate = registrationDate; }
     }
 }
