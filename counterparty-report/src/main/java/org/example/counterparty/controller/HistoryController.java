@@ -59,17 +59,24 @@ public class HistoryController {
         return reportBuilder
                 .createNew()
                 .setTitle("ОТЧЕТ ПО КОНТРАГЕНТУ")
+                .addSection("\n" + "-".repeat(50))
+                .addSection("КАРТОЧКА КОМПАНИИ")
+                .addSection("-".repeat(50))
                 .addSection("\n1. ОСНОВНЫЕ СВЕДЕНИЯ:")
-                .addSection("   Наименование: " + data.getName())
-                .addSection("   ИНН: " + data.getInn())
-                .addSection("   ОГРН: " + data.getOgrn())
+                .addSection("   Наименование: " + (data.getName() != null ? data.getName() : "Не указано"))
+                .addSection("   ИНН: " + (data.getInn() != null ? data.getInn() : "Не указан"))
+                .addSection("   ОГРН: " + (data.getOgrn() != null ? data.getOgrn() : "Не указан"))
                 .addSection("\n2. ЮРИДИЧЕСКИЙ АДРЕС:")
-                .addSection("   " + data.getAddress())
+                .addSection("   " + (data.getAddress() != null ? data.getAddress() : "Не указан"))
                 .addSection("\n3. СТАТУС ОРГАНИЗАЦИИ:")
                 .addSection("   " + formatStatus(data.getStatus()))
                 .addSection("\n4. ДАТА РЕГИСТРАЦИИ:")
-                .addSection("   " + data.getRegistrationDate())
-                .setFooter("\nДата формирования отчета: " + java.time.LocalDate.now())
+                .addSection("   " + (data.getRegistrationDate() != null ? data.getRegistrationDate() : "Не указана"))
+                .addSection("\n" + "-".repeat(50))
+                .addSection("КРАТКОЕ РЕЗЮМЕ")
+                .addSection("-".repeat(50))
+                .addSection(getResume(data))
+                .setFooter("\n" + "-".repeat(50) + "\nДата формирования отчета: " + java.time.LocalDate.now())
                 .build();
     }
     private String formatStatus(String status) {
@@ -81,5 +88,34 @@ public class HistoryController {
             default: return status;
         }
     }
+    private String getResume(CounterpartyData data) {
+        if (data == null) {
+            return "Нет данных для анализа";
+        }
+
+        String status = data.getStatus();
+        String registrationDate = data.getRegistrationDate();
+
+        String statusAnalysis;
+        if ("ACTIVE".equals(status)) {
+            statusAnalysis = "Организация действует, можно заключать договор";
+        } else if ("LIQUIDATING".equals(status)) {
+            statusAnalysis = "Организация в процессе ликвидации, требуется осторожность";
+        } else if ("LIQUIDATED".equals(status)) {
+            statusAnalysis = "Организация ликвидирована, не рекомендуется заключать договор";
+        } else {
+            statusAnalysis = "Статус организации не определён, требуется дополнительная проверка";
+        }
+
+        String ageAnalysis;
+        if (registrationDate != null && !registrationDate.isEmpty()) {
+            ageAnalysis = "Организация зарегистрирована " + registrationDate;
+        } else {
+            ageAnalysis = "Дата регистрации не указана";
+        }
+
+        return statusAnalysis + "\n" + ageAnalysis;
+    }
+
 
 }

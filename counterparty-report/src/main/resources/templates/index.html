@@ -42,6 +42,10 @@
         Выполняется проверка, пожалуйста, подождите..
     </div>
 
+    <div th:if="${remainingRequests != null}" class="info">
+        Осталось проверок: <span th:text="${remainingRequests}"></span> из 10
+    </div>
+
     <script>
         document.querySelector('form').onsubmit = function() {
             document.getElementById('loading').style.display = 'block';

@@ -43,4 +43,15 @@ public class CounterpartyService {
         request.setCounterpartyData(data);
         verificationRequestRepository.save(request);
     }
+
+    public int getUserRequestsCount(User user) {
+        return verificationRequestRepository.countByUser(user);
+    }
+
+    public int getRemainingRequests(User user) {
+        int currentCount = getUserRequestsCount(user);
+        int maxRequests = 10;
+        return Math.max(0, maxRequests - currentCount);
+    }
+
 }
