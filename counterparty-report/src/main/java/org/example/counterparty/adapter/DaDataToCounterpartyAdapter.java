@@ -10,6 +10,9 @@ public class DaDataToCounterpartyAdapter implements CounterpartyDataAdapter {
 
     @Override
     public CounterpartyData adapt(DaDataResponse response, VerificationRequest request) {
+
+        if (response == null) return null;
+
         DaDataResponse.Suggestion suggestion = response.getFirstSuggestion();
         if (suggestion == null) return null;
 
