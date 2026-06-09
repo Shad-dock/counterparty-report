@@ -62,6 +62,9 @@ public class ConcreteReportBuilderTest {
         String result = builder
                 .createNew()
                 .setTitle("ОТЧЕТ ПО КОНТРАГЕНТУ")
+                .addSection("\n" + "-".repeat(50))
+                .addSection("КАРТОЧКА КОМПАНИИ")
+                .addSection("-".repeat(50))
                 .addSection("\n1. ОСНОВНЫЕ СВЕДЕНИЯ:")
                 .addSection("   Наименование: ПАО СБЕРБАНК")
                 .addSection("   ИНН: 7707083893")
@@ -70,16 +73,30 @@ public class ConcreteReportBuilderTest {
                 .addSection("   г Москва, ул Вавилова, д 19")
                 .addSection("\n3. СТАТУС ОРГАНИЗАЦИИ:")
                 .addSection("   Действующее")
-                .setFooter("Дата формирования: 2024-06-08")
+                .addSection("\n4. ДАТА РЕГИСТРАЦИИ:")
+                .addSection("   2002-08-23")
+                .addSection("\n" + "-".repeat(50))
+                .addSection("КРАТКОЕ РЕЗЮМЕ")
+                .addSection("-".repeat(50))
+                .addSection("Организация действует, можно заключать договор")
+                .addSection("Организация зарегистрирована 2002-08-23")
+                .setFooter("\n" + "-".repeat(50) + "\nДата формирования отчета: 2024-06-09")
                 .build();
 
         assertThat(result).contains("ОТЧЕТ ПО КОНТРАГЕНТУ");
+        assertThat(result).contains("КАРТОЧКА КОМПАНИИ");
         assertThat(result).contains("ПАО СБЕРБАНК");
         assertThat(result).contains("7707083893");
         assertThat(result).contains("1027700132195");
         assertThat(result).contains("г Москва, ул Вавилова, д 19");
         assertThat(result).contains("Действующее");
-        assertThat(result).contains("2024-06-08");
+        assertThat(result).contains("2002-08-23");
+        assertThat(result).contains("КРАТКОЕ РЕЗЮМЕ");
+        assertThat(result).contains("Организация действует, можно заключать договор");
+        assertThat(result).contains("Организация зарегистрирована");
+        assertThat(result).contains("-".repeat(50));
+        assertThat(result).contains("-".repeat(50));
+        assertThat(result).contains("Дата формирования отчета");
     }
 
     @Test

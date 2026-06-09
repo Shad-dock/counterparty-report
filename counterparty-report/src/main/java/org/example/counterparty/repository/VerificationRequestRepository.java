@@ -9,4 +9,5 @@ import java.util.List;
 public interface VerificationRequestRepository extends JpaRepository<VerificationRequest, Long> {
     List<VerificationRequest> findByUserOrderByCreatedAtDesc(User user);
     List<VerificationRequest> findByUserAndInnOgrn(User user, String innOgrn);
+    int countByUser(User user);
 }

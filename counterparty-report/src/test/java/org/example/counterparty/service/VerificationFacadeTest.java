@@ -160,6 +160,21 @@ public class VerificationFacadeTest {
         verify(counterpartyService, never()).saveCounterpartyData(any(), any());
     }
 
+    @Test
+    @DisplayName("Превышен лимит проверок = ошибка")
+    void shouldReturnErrorWhenLimitExceeded() {
+        String innOgrn = "7707083893";
+
+        when(counterpartyService.getUserRequestsCount(testUser)).thenReturn(10);
+
+        VerificationFacade.VerificationResult result = verificationFacade.verify(innOgrn, testUser);
+
+        assertThat(result.isSuccess()).isFalse();
+        assertThat(result.getError()).contains("Превышен лимит");
+
+        verify(daDataService, never()).findPartyByInnOgrn(any());
+    }
+
 
     private DaDataResponse createValidDaDataResponse() {
         DaDataResponse response = new DaDataResponse();
