@@ -5,5 +5,5 @@ import org.example.counterparty.entity.CounterpartyData;
 import org.example.counterparty.entity.VerificationRequest;
 
 public interface CounterpartyDataAdapter {
-    CounterpartyData adapt(DaDataResponse response, VerificationRequest request);
+    CounterpartyData adapt(String innOgrn, VerificationRequest request);
 }

@@ -2,34 +2,53 @@ package org.example.counterparty.adapter;
 
 import org.example.counterparty.dto.DaDataResponse;
 import org.example.counterparty.entity.CounterpartyData;
-import org.example.counterparty.entity.VerificationRequest;
 import org.example.counterparty.entity.User;
+import org.example.counterparty.entity.VerificationRequest;
+import org.example.counterparty.service.DaDataService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-public class DaDataToCounterpartyAdapterTest {
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+@DisplayName("Тесты для DaDataToCounterpartyAdapter")
+class DaDataToCounterpartyAdapterTest {
+
+    @Mock
+    private DaDataService daDataService;  // ← добавили мок
+
+    @InjectMocks
     private DaDataToCounterpartyAdapter adapter;
-    public VerificationRequest request;
+
+    private VerificationRequest request;
+    private User user;
 
     @BeforeEach
     void setUp() {
-        adapter = new DaDataToCounterpartyAdapter();
-
-        User user = new User("testuser", "password", "USER");
+        user = new User("testuser", "password", "USER");
         request = new VerificationRequest(user, "7707083893");
+        request.setId(1L);
     }
 
     @Test
     @DisplayName("Должен преобразовать валидный ответ DaData в CounterpartyData")
     void shouldConvertValidResponseToCounterpartyData() {
+        String innOgrn = "7707083893";
         DaDataResponse response = createValidDaDataResponse();
 
-        CounterpartyData result = adapter.adapt(response, request);
+        when(daDataService.findPartyByInnOgrn(innOgrn)).thenReturn(response);
+
+        CounterpartyData result = adapter.adapt(innOgrn, request);
 
         assertThat(result).isNotNull();
         assertThat(result.getRequest()).isEqualTo(request);
@@ -39,49 +58,64 @@ public class DaDataToCounterpartyAdapterTest {
         assertThat(result.getAddress()).isEqualTo("г Москва, ул Вавилова, д 19");
         assertThat(result.getStatus()).isEqualTo("ACTIVE");
         assertThat(result.getRegistrationDate()).isNotNull();
+
+        verify(daDataService).findPartyByInnOgrn(innOgrn);
     }
 
     @Test
     @DisplayName("Должен вернуть null, если ответ от API пустой")
     void shouldReturnNullWhenResponseIsNull() {
-        CounterpartyData result = adapter.adapt(null, request);
+        String innOgrn = "7707083893";
+        when(daDataService.findPartyByInnOgrn(innOgrn)).thenReturn(null);
+
+        CounterpartyData result = adapter.adapt(innOgrn, request);
 
         assertThat(result).isNull();
+        verify(daDataService).findPartyByInnOgrn(innOgrn);
     }
 
     @Test
-    @DisplayName("Должен вернуть null, если нет suggestions")
+    @DisplayName("Должен вернуть null, если нет подсказок (suggestions)")
     void shouldReturnNullWhenNoSuggestions() {
+        String innOgrn = "7707083893";
         DaDataResponse response = new DaDataResponse();
         response.setSuggestions(new ArrayList<>());
+        when(daDataService.findPartyByInnOgrn(innOgrn)).thenReturn(response);
 
-        CounterpartyData result = adapter.adapt(response, request);
+        CounterpartyData result = adapter.adapt(innOgrn, request);
 
         assertThat(result).isNull();
+        verify(daDataService).findPartyByInnOgrn(innOgrn);
     }
 
     @Test
     @DisplayName("Должен обработать отсутствие адреса")
     void shouldHandleMissingAddress() {
+        String innOgrn = "7707083893";
         DaDataResponse response = createResponseWithoutAddress();
+        when(daDataService.findPartyByInnOgrn(innOgrn)).thenReturn(response);
 
-        CounterpartyData result = adapter.adapt(response, request);
+        CounterpartyData result = adapter.adapt(innOgrn, request);
 
         assertThat(result).isNotNull();
         assertThat(result.getInn()).isEqualTo("7707083893");
         assertThat(result.getAddress()).isNull();
+        verify(daDataService).findPartyByInnOgrn(innOgrn);
     }
 
     @Test
     @DisplayName("Должен обработать отсутствие статуса")
     void shouldHandleMissingStatus() {
+        String innOgrn = "7707083893";
         DaDataResponse response = createResponseWithoutState();
+        when(daDataService.findPartyByInnOgrn(innOgrn)).thenReturn(response);
 
-        CounterpartyData result = adapter.adapt(response, request);
+        CounterpartyData result = adapter.adapt(innOgrn, request);
 
         assertThat(result).isNotNull();
         assertThat(result.getInn()).isEqualTo("7707083893");
         assertThat(result.getStatus()).isNull();
+        verify(daDataService).findPartyByInnOgrn(innOgrn);
     }
 
     private DaDataResponse createValidDaDataResponse() {
@@ -172,5 +206,4 @@ public class DaDataToCounterpartyAdapterTest {
 
         return response;
     }
-
 }
