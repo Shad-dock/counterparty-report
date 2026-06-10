@@ -3,20 +3,27 @@ package org.example.counterparty.adapter;
 import org.example.counterparty.dto.DaDataResponse;
 import org.example.counterparty.entity.CounterpartyData;
 import org.example.counterparty.entity.VerificationRequest;
+import org.example.counterparty.service.DaDataService;
 import org.springframework.stereotype.Component;
 
 @Component
 public class DaDataToCounterpartyAdapter implements CounterpartyDataAdapter {
 
+    private final DaDataService daDataService;  // ← добавить поле
+
+    public DaDataToCounterpartyAdapter(DaDataService daDataService) {
+        this.daDataService = daDataService;
+    }
+
     @Override
-    public CounterpartyData adapt(DaDataResponse response, VerificationRequest request) {
+    public CounterpartyData adapt(String innOgrn, VerificationRequest request) {
+        DaDataResponse response = daDataService.findPartyByInnOgrn(innOgrn);
 
-        if (response == null) return null;
+        if (response == null || response.getFirstSuggestion() == null) {
+            return null;
+        }
 
-        DaDataResponse.Suggestion suggestion = response.getFirstSuggestion();
-        if (suggestion == null) return null;
-
-        DaDataResponse.Data data = suggestion.getData();
+        DaDataResponse.Data data = response.getFirstSuggestion().getData();
         if (data == null) return null;
 
         CounterpartyData counterpartyData = new CounterpartyData();
@@ -26,20 +33,19 @@ public class DaDataToCounterpartyAdapter implements CounterpartyDataAdapter {
         counterpartyData.setOgrn(data.getOgrn());
         counterpartyData.setAddress(data.getAddress() != null ? data.getAddress().getValue() : null);
         counterpartyData.setStatus(data.getState() != null ? data.getState().getStatus() : null);
-        //counterpartyData.setRegistrationDate(data.getRegistrationDate());
-        String regDate = null;
+
         if (data.getState() != null && data.getState().getRegistrationDate() != null) {
+            String rawDate = data.getState().getRegistrationDate();
             try {
-                long timestamp = Long.parseLong(data.getState().getRegistrationDate());
+                long timestamp = Long.parseLong(rawDate);
                 java.time.LocalDate date = java.time.Instant.ofEpochMilli(timestamp)
                         .atZone(java.time.ZoneId.systemDefault())
                         .toLocalDate();
-                regDate = date.toString();
+                counterpartyData.setRegistrationDate(date.toString());
             } catch (NumberFormatException e) {
-                regDate = data.getState().getRegistrationDate();
+                counterpartyData.setRegistrationDate(rawDate);
             }
         }
-        counterpartyData.setRegistrationDate(regDate);
 
         return counterpartyData;
     }
