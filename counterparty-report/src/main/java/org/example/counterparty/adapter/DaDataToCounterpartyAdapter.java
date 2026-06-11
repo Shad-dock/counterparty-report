@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class DaDataToCounterpartyAdapter implements CounterpartyDataAdapter {
 
-    private final DaDataService daDataService;  // ← добавить поле
+    private final DaDataService daDataService;
 
     public DaDataToCounterpartyAdapter(DaDataService daDataService) {
         this.daDataService = daDataService;
